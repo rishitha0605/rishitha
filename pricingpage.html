@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fictitious Product Pricing</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: rgb(251, 150, 167);
+        }
+
+        header {
+            font-family: cursive;
+            font-size: larger ;
+            background-color: #cf3045;
+            color: black;
+            text-align: center;
+            padding: 1em 0;
+        }
+
+        .para{
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          text-align: center;  
+          font-size: large;
+          color: red;
+        }
+
+        .currency-container{
+            font-family: cursive ;
+            font-size: medium;
+            text-align: center;
+        }
+
+        .pricing-container {
+            font-family: cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70vh;
+        }
+
+        .pricing-card {
+            border: 10px solid #cccccc00;
+            box-shadow: 0 0 10px rgba(238, 72, 110, 0.896);
+            margin: 20px;
+            padding: 10px;
+            text-align: center;
+            background-color: rgb(248, 177, 200) ;
+            width: 300px;
+        }
+
+        .pricing-card1{
+            background-color: rgb(251, 124, 146);
+            padding: 5px;
+            
+        }
+
+        .pricing-card2{
+            background-color: rgb(241, 86, 112);
+            padding: 5px;
+            
+        }
+
+        .pricing-card3{
+            background-color: rgb(251, 63, 95);
+            padding: 5px;
+            
+        }
+
+        .pricing-card4{
+            background-color: rgb(251, 124, 146);
+            padding: 5px;
+        }
+
+        .pricing-card5{
+            background-color:  rgb(241, 86, 112);
+            padding: 5px;
+        }
+
+        .pricing-card6{
+            background-color: rgb(251, 63, 95);
+            padding: 5px;
+        }
+
+        .toggleSwitch {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Fictitious Product Pricing Page</h1>
+    </header>
+
+    <div class="para">
+        <p> <b>10% DISCOUNT ON YEARLY BILLING !!!!</b> </p>
+    </div>
+
+    <div class="currency-container">
+        <label for="currencySelector">Select Currency:</label>
+        <select id="currencySelector" onchange="updateCurrency()">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="INR">INR</option> 
+        </select>
+    </div>
+
+    <div class="pricing-container">
+        <div class="pricing-card">
+            <div class="pricing-card1">
+                <h2>STARTER</h2> 
+            </div>
+            <p id="price1">$29.99/month</p>
+            <label for="toggleSwitch1">Yearly Billing</label>
+            <input type="checkbox" id="toggleSwitch1" class="toggleSwitch">
+            <div class="pricing-card4">
+                <h3>Benefits</h3> 
+                <p id="features1">1 user</p>
+                <p id="features1">100MB Disk Storage</p>
+                <p id="features1">2 Email Accounts</p>
+                <p id="features1">No Customer Support</p>
+                <input type="button" name="buy now" value="Select">
+            </div>
+        </div>
+
+        <div class="pricing-card">
+            <div class="pricing-card2">
+                <h2>BASIC</h2>
+            </div>
+            <p id="price2">$49.99/month</p>
+            <label for="toggleSwitch2">Yearly Billing</label>
+            <input type="checkbox" id="toggleSwitch2" class="toggleSwitch">
+            <div class="pricing-card5">
+                <h3>Benefits</h3> 
+                <p id="features2">3 users</p>
+                <p id="features2">200 MB Disk Storage</p>
+                <p id="features2">5 Email Accounts</p>
+                <p id="features2">Customer Support 24/7</p>
+                <input type="button" name="buy now" value="Select">
+            </div>
+        </div>
+
+        <div class="pricing-card">
+            <div class="pricing-card3">
+                <h2>UNLIMITED</h2>
+            </div>
+            <p id="price3">$69.99/month</p>
+            <label for="toggleSwitch3">Yearly Billing</label>
+            <input type="checkbox" id="toggleSwitch3" class="toggleSwitch">
+            <div class="pricing-card6">
+                <h3>Benefits</h3>
+                <p id="features2">5 users</p>
+                <p id="features2">300 MB Disk Storage</p>
+                <p id="features2">8 Email Accounts</p>
+                <p id="features3">Customer support 24/7</p>
+                <input type="button" name="buy now" value="Select" >
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const toggleSwitches = document.querySelectorAll('.toggleSwitch');
+        const prices = document.querySelectorAll('[id^="price"]');
+        const currencySelector = document.getElementById('currencySelector');
+
+        function updateCurrency() {
+            const selectedCurrency = currencySelector.value;
+            updatePrices(selectedCurrency);
+
+        }
+        function getCurrencySymbol(currency) {
+            // Implement a mapping of currency codes to symbols as needed
+            const currencySymbols = {
+                'USD': '$',
+                'EUR': '€',
+                'INR': '₹' // Indian Rupee symbol
+                // Add more mappings as needed
+            };
+
+            return currencySymbols[currency] || currency;
+        }
+
+        toggleSwitches.forEach((toggleSwitch, index) => {
+            toggleSwitch.addEventListener('change', function () {
+                const yearlyBilling = toggleSwitch.checked;
+                const discountMultiplier = yearlyBilling ? 0.9 : 1; // 10% discount for yearly billing
+
+                const currentPrice = parseFloat(prices[index].innerText.match(/\d+\.\d+/)[0]);
+                prices[index].innerText = `$${(currentPrice * discountMultiplier).toFixed(2)}/month`;
+            });
+        });
+        updateCurrency();
+    </script>
+</body>
+</html>
