@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        body {
+            font-family: cursive;
+            background-color: pink;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #todo-container {
+            width: 300px;
+            background-color:rgb(242, 118, 138);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        #task-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .task {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+
+        .task input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .task button {
+            background-color: #ff5555;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="todo-container">
+    <h2>To-Do List</h2>
+    <input type="text" id="new-task" placeholder="Add a new task">
+    <ul id="task-list"></ul>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Load tasks from local storage on page load
+        loadTasks();
+
+        // Event listener for adding a new task
+        document.getElementById("new-task").addEventListener("keydown", function (event) {
+            if (event.key === "Enter" && event.target.value.trim() !== "") {
+                addTask(event.target.value.trim());
+                event.target.value = "";
+            }
+        });
+
+        // Event delegation for task actions (edit, delete, toggle)
+        document.getElementById("task-list").addEventListener("click", function (event) {
+            const target = event.target;
+
+            if (target.classList.contains("delete")) {
+                deleteTask(target.parentElement.dataset.id);
+            } else if (target.classList.contains("toggle")) {
+                toggleTask(target.parentElement.dataset.id);
+            } else if (target.tagName === "SPAN") {
+                editTask(target.parentElement.dataset.id);
+            }
+        });
+
+        // Load tasks from local storage
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+            tasks.forEach(task => {
+                addTaskToDOM(task.text, task.id, task.completed);
+            });
+        }
+
+        // Save tasks to local storage
+        function saveTasks(tasks) {
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        // Add a new task
+        function addTask(text) {
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            const newTask = { id: Date.now(), text, completed: false };
+            tasks.push(newTask);
+
+            saveTasks(tasks);
+            addTaskToDOM(newTask.text, newTask.id, newTask.completed);
+        }
+
+        // Add a task to the DOM
+        function addTaskToDOM(text, id, completed) {
+            const taskList = document.getElementById("task-list");
+
+            const taskElement = document.createElement("li");
+            taskElement.classList.add("task");
+            taskElement.dataset.id = id;
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = completed;
+            taskElement.appendChild(checkbox);
+
+            const taskText = document.createElement("span");
+            taskText.textContent = text;
+            taskElement.appendChild(taskText);
+
+            const deleteButton = document.createElement("button");
+            deleteButton.classList.add("delete");
+            deleteButton.textContent = "Delete";
+            taskElement.appendChild(deleteButton);
+
+            taskList.appendChild(taskElement);
+        }
+
+        // Edit a task
+        function editTask(id) {
+            const taskTextElement = document.querySelector(`[data-id="${id}"] span`);
+            const newText = prompt("Edit task:", taskTextElement.textContent);
+
+            if (newText !== null) {
+                const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+                const updatedTasks = tasks.map(task => {
+                    if (task.id === parseInt(id)) {
+                        task.text = newText;
+                    }
+                    return task;
+                });
+
+                saveTasks(updatedTasks);
+                taskTextElement.textContent = newText;
+            }
+        }
+
+        // Delete a task
+        function deleteTask(id) {
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            const updatedTasks = tasks.filter(task => task.id !== parseInt(id));
+
+            saveTasks(updatedTasks);
+            document.querySelector(`[data-id="${id}"]`).remove();
+        }
+
+        // Toggle task completion status
+        function toggleTask(id) {
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            const updatedTasks = tasks.map(task => {
+                if (task.id === parseInt(id)) {
+                    task.completed = !task.completed;
+                }
+                return task;
+            });
+
+            saveTasks(updatedTasks);
+        }
+    });
+</script>
+
+</body>
+</html>
